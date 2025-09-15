@@ -12,61 +12,68 @@
   </head>
   <body>
     <script>
-      // Intersection Observer for scroll animations
-      document.addEventListener("DOMContentLoaded", function () {
-        const observerOptions = {
-          root: null,
-          rootMargin: "0px",
-          threshold: 0.1,
-        };
+  document.addEventListener("DOMContentLoaded", function () {
+    // ======================
+    // Intersection Observer
+    // ======================
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1,
+    };
 
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              // Add delay for staggered animations on cards
-              if (
-                entry.target.classList.contains("event-card") ||
-                entry.target.classList.contains("contact-card")
-              ) {
-                const delay = entry.target.dataset.animationDelay || 0;
-                setTimeout(() => {
-                  entry.target.classList.add("animate");
-                }, delay);
-              } else {
-                entry.target.classList.add("animate");
-              }
-              observer.unobserve(entry.target);
-            }
-          });
-        }, observerOptions);
-
-        // Observe all sections for scroll animations
-        document
-          .querySelectorAll("section, .hero-section, .footer")
-          .forEach((section) => {
-            observer.observe(section);
-          });
-
-        // Observe navbar container separately
-        const navbarContainer = document.querySelector(".navbar-container");
-        if (navbarContainer) {
-          // Navbar should animate immediately on page load
-          setTimeout(() => {
-            navbarContainer.classList.add("animate");
-          }, 100);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (
+            entry.target.classList.contains("event-card") ||
+            entry.target.classList.contains("contact-card")
+          ) {
+            const delay = entry.target.dataset.animationDelay || 0;
+            setTimeout(() => {
+              entry.target.classList.add("animate");
+            }, delay);
+          } else {
+            entry.target.classList.add("animate");
+          }
+          observer.unobserve(entry.target);
         }
-
-        // Observe all cards for scroll animations with staggered delays
-        document
-          .querySelectorAll(".event-card, .contact-card")
-          .forEach((card, index) => {
-            // Calculate delay based on position
-            const delay = Math.min(index * 100, 1000); // Max 1 second delay
-            card.dataset.animationDelay = delay;
-            observer.observe(card);
-          });
       });
-    </script>
+    }, observerOptions);
+
+    document
+      .querySelectorAll("section, .hero-section, .footer")
+      .forEach((section) => {
+        observer.observe(section);
+      });
+
+    const navbarContainer = document.querySelector(".navbar-container");
+    if (navbarContainer) {
+      setTimeout(() => {
+        navbarContainer.classList.add("animate");
+      }, 100);
+    }
+
+    document
+      .querySelectorAll(".event-card, .contact-card")
+      .forEach((card, index) => {
+        const delay = Math.min(index * 100, 1000);
+        card.dataset.animationDelay = delay;
+        observer.observe(card);
+      });
+
+    // ======================
+    // Shuffle Cards
+    // ======================
+    document.querySelectorAll(".cards-grid").forEach((grid) => {
+      const cards = Array.from(grid.children);
+      const shuffled = cards.sort(() => Math.random() - 0.5);
+
+      // Clear & re-append in random order
+      shuffled.forEach((card) => grid.appendChild(card));
+    });
+  });
+</script>
     <nav class="navbar">
       <div class="navbar-container">
         <div class="navbar-left">
